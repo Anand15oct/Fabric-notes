@@ -1,0 +1,64 @@
+# Microsoft Fabric Notebook
+# Convert CSV files from OneLake to Delta Tables
+
+# COMMAND ----------
+
+# Import necessary libraries
+from pyspark.sql import SparkSession
+from notebookutils import mssparkutils
+
+# COMMAND ----------
+
+# No need to create a SparkSession in Fabric, it's already available as 'spark'
+
+# COMMAND ----------
+
+# Define the OneLake path where the CSV files are stored
+onelake_path = "Files/path/to/csv_directory"  # Adjust this path to your OneLake CSV directory
+
+# COMMAND ----------
+
+# List all CSV files in the OneLake directory
+csv_files = [f for f in mssparkutils.fs.ls(onelake_path) if f.name.endswith('.csv')]
+
+# Print the list of CSV files
+print("CSV files found in OneLake:")
+for file in csv_files:
+    print(file.name)
+
+# COMMAND ----------
+
+# Define a function to convert CSV to Delta
+def convert_csv_to_delta(csv_file_path, delta_table_path):
+    # Read the CSV file
+    df = spark.read.csv(csv_file_path, header=True, inferSchema=True)
+    
+    # Write the DataFrame to Delta format
+    df.write.format("delta").mode("overwrite").save(delta_table_path)
+
+# COMMAND ----------
+
+# Loop through each CSV file and convert it to Delta format
+for csv_file in csv_files:
+    csv_file_path = csv_file.path
+    delta_table_name = csv_file.name.replace(".csv", "")
+    delta_table_path = f"Tables/{delta_table_name}"  # Fabric uses 'Tables' for Delta tables
+
+    print(f"Converting {csv_file_path} to Delta table: {delta_table_name}")
+    convert_csv_to_delta(csv_file_path, delta_table_path)
+
+    # Optionally, create a Spark SQL table for easy querying
+    spark.sql(f"CREATE TABLE IF NOT EXISTS {delta_table_name} USING DELTA LOCATION '{delta_table_path}'")
+
+# COMMAND ----------
+
+# Confirm conversion
+print("CSV to Delta conversion completed.")
+
+# COMMAND ----------
+
+# List the newly created Delta tables
+tables = spark.sql("SHOW TABLES").collect()
+print("Newly created Delta tables:")
+for table in tables:
+    print(table.tableName)
