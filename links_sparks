@@ -1,0 +1,49 @@
+https://sparkconfigoptimizer.com/
+
+Spark Performance Optimization: Advanced Partitioning Techniques
+1. Date-Based Partitioning
+🔹 df.repartition("month")
+
+✅ Useful for time-series data
+
+2. Compound Partitioning
+🔹 df.repartition("month", "country")
+
+✅ Combines multiple dimensions for better distribution
+
+3. Specific Number Partitioning
+🔹 df.repartition(10, "month")
+
+✅ Helps control shuffle size
+
+4. Coalescing to Reduce Partitions
+🔹 df.coalesce(5)
+
+✅ Reduces overhead when writing output
+
+5. Range Partitioning for Balanced Distribution
+🔹 df.repartitionByRange(20, "row_number")
+
+✅ Avoids hotspots in certain partitions
+
+6. Custom Partitioning with UDFs
+🔹 df.withColumn("partition_id", custom_partition_udf("month", "country"))
+
+✅ Full control over partitioning logic
+
+⚡ Practical Tips for Optimization
+✅ Monitoring
+
+Use Spark UI to identify skew
+Track shuffle bytes & executor utilization
+
+✅ Sizing Partitions Correctly
+
+Aim for 128MB per partition
+Avoid tiny partitions (<10MB)
+
+✅ Advanced Strategies
+
+Bucketing for frequent joins
+Partition pruning to improve query performance
+Custom partitioners for complex workloads
