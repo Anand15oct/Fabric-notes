@@ -47,3 +47,12 @@ Avoid tiny partitions (<10MB)
 Bucketing for frequent joins
 Partition pruning to improve query performance
 Custom partitioners for complex workloads
+
+
+=======================================================
+Use Python Notebooks for Small Workloads instead of spark
+https://www.youtube.com/watch?v=XdJysZ8SVbY
+
+https://milescole.dev/data-engineering/2024/12/12/Should-You-Ditch-Spark-DuckDB-Polars.html
+
+
